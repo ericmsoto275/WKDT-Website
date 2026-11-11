@@ -6,6 +6,7 @@
     <title>89.3 FM | WKDT Cadet Radio & DJ</title>
     <link rel="icon" href="assets/OldLogoFavicon3.ico" type="image/x-icon">
     <link href="styles/style.css" rel="stylesheet"/>
+    <link href="styles/podcasts.css" rel="stylesheet"/>
   </head>
   <body>
     <header id="header">
@@ -15,36 +16,35 @@
       <div class="bigImageOverlay">
         <div class="bigImageOverlayContainer">
           <h1 class="bigImageHeader">Podcasts</h1>
-          <p class="bigImageText">In addition to our live music and sports, WKDT also hosts podcasts made by Cadets and for Cadets. These podcasts focus on day to day Cadet life with varying perspectives from throughout the Corps of Cadets.</p>
-          <a href="#mostRecent" class="bigImageButton button">Scroll to the most recent podcast!</a>
+          <p class="bigImageText">In addition to our live music and sports, WKDT records performances, sportscasts, podcasts and radio shows made by Cadets and for Cadets. Browse the recordings below, then listen on Spotify or Apple Podcasts.</p>
+          <a href="#recordings" class="bigImageButton button">Browse the recordings</a>
         </div>
       </div>
     </div>
-    <section>
-      <h2>Podcasts</h2>
+    <section id="recordings">
+      <h2>Recordings</h2>
       <hr>
-      <h3>Podcast 1: The pilot</h3>
-      <p style="margin-top: 20px;">This is the pilot podcast of WKDT's very own "Hooah Hangout" radio show.</p>
-      <audio controls preload="metadata" style="margin-top: 20px; width: 100%;">
-        <source src="assets/podcasts/0001_Pilot_Podcast by WKDT.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
-      <h3 style="margin-top: 60px;">Podcast 2: Projects Day and Inspiration to Serve</h3>
-      <p style="margin-top: 20px;">This episode talks about Projects Day here at West Point and the Inspiration to Serve Event for the Yearlings.</p>
-      <audio controls preload="metadata" style="margin-top: 20px; width: 100%;">
-        <source src="assets/podcasts/0002_Projects_Day_Inspiration_to_Serve_Podcast by WKDT.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
-      <h3 style="margin-top: 60px;" id="mostRecent">Podcast 3: Pre Sandhurst Podcast</h3>
-      <p style="margin-top: 20px;">This episode talks about the Sandhurst competition this year.</p>
-      <audio controls preload="metadata" style="margin-top: 20px; width: 100%;">
-        <source src="assets/podcasts/0003_Pre_Sandhurst_Podcast by WKDT.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
+      <details class="mediaSection" id="performances">
+        <summary>Performances</summary>
+        <div class="mediaList" data-list="performances"></div>
+      </details>
+      <details class="mediaSection" id="sportscasting">
+        <summary>Sportscasting</summary>
+        <div class="mediaList" data-list="sportscasting"></div>
+      </details>
+      <details class="mediaSection" id="podcasts">
+        <summary>Podcasts</summary>
+        <div class="mediaList" data-list="podcasts"></div>
+      </details>
+      <details class="mediaSection" id="radioShows">
+        <summary>Radio Shows</summary>
+        <div class="mediaList" data-list="radioShows"></div>
+      </details>
     </section>
     <footer id="footer"></footer>
     <div id="radioPopout"></div>
     <script src="scripts/script.js"></script>
+    <script src="scripts/podcasts.js"></script>
   </body>
 </html>
 
