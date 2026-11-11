@@ -16,6 +16,10 @@
     display: none;
     background-color: #0805;
 }
+.appleMusic {
+    display: none;
+    background-color: #f305;
+}
 .youtube {
     display: none;
     background-color: #8005;
@@ -143,7 +147,7 @@ details[open]::details-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20%;
+    flex: 1 1 0;
     padding: 8px;
     border-radius: 20px;
     transition: background-color 0.3s;
@@ -167,6 +171,9 @@ input[type="radio"]:checked + .radioLabel {
 .radioLabel[for="spotify"] {
     color: #0A0;
 }
+.radioLabel[for="appleMusic"] {
+    color: #F30;
+}
 .radioLabel[for="youtube"],
 .radioLabel[for="youtubeMusic"] {
     color: #F00;
@@ -177,5 +184,6 @@ input[type="radio"]:checked + .radioLabel {
     }
     .radioLabel {
         width: 100%;
+        flex: none;
     }
 }
