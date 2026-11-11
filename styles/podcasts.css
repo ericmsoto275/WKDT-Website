@@ -1,6 +1,9 @@
 #recordings {
     max-width: 900px;
-    margin: 0 auto;
+    text-align: left;
+}
+.recordingsIntro {
+    margin-bottom: 1.5rem;
 }
 .mediaSection {
     margin: 1.2rem 0;
