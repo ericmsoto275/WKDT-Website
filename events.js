@@ -1,6 +1,6 @@
 function loadEvents() {
     // mm,dd,yyyy,start,end,type,title,[description,dj,Tidal,Spotify,YouTube,YoutubeMusic,AppleMusic]
-    // Only the Spotify and Apple Music columns are shown on the site now. Leave unused columns empty (keep the commas).
+    // A music-service button only appears for an event if that service's column is filled in (leave unused columns empty, keep the commas).
     // DO NOT USE @, (, ), /, or other symbols!!!
     const eventmatrix = `
     11,06,2026,17:00,21:00,dj,Army vs Air Force Boxing,WKDT provided walk-out music for Army vs Air Force Boxing,,,2bRg46YGatln5PDnLRnC6I,,,playlist/army-air-force-walk-out-songs/pl.u-DdANr1PC0P8WaYk
@@ -117,7 +117,7 @@ function loadEvents() {
     }
     // Add event to overlays (reworked to use Event class)
     events.forEach(event => {
-        if (event.Type === "dj" && (event.Services.spotify || event.Services.apple)) {
+        if (event.Type === "dj" && event.hasServices()) {
             const eventRef = `${event.Date.getMonth() + 1}-${event.Date.getDate()}-${event.Date.getFullYear()}_${event.Title.replace(/ /g, '-')}`;
             document.getElementById("overlays").innerHTML += `
             <div class="replayContainer" eventRef="${eventRef}">
@@ -127,10 +127,7 @@ function loadEvents() {
                     <div id="selectService" class="radioGroup">
                         <input type="radio" id="none" name="service" onClick="changeService('.none')" checked>
                         <label for="none" class="radioLabel">None</label>
-                        <input type="radio" id="spotify" name="service" onClick="changeService('.spotify')">
-                        <label for="spotify" class="radioLabel">Spotify</label>
-                        <input type="radio" id="appleMusic" name="service" onClick="changeService('.appleMusic')">
-                        <label for="appleMusic" class="radioLabel">Apple Music</label>
+                        ${event.getServiceButtons()}
                     </div>
                 </details>
                 <div class="button closeOverlay" onclick="hideEventOverlay('${eventRef}');">X</div>
@@ -151,20 +148,30 @@ class Event {
         this.Title = title;
         this.Description = description;
         this.DJ = dj;
-        this.Services = services;  // Embed fragments by service name: { spotify, apple, ... }
+        this.Services = services;  // Embed fragments by service: tidal, spotify, appleMusic, youtube, youtubeMusic
+    }
+    hasServices() {
+        return Object.values(this.Services).some(fragment => fragment);
+    }
+    getServiceButtons() {
+        const labels = { tidal: 'Tidal', spotify: 'Spotify', appleMusic: 'Apple Music', youtube: 'YouTube', youtubeMusic: 'YouTube Music' };
+        return Object.keys(labels).filter(key => this.Services[key]).map(key =>
+            `<input type="radio" id="${key}" name="service" onClick="changeService('.${key}')">
+                        <label for="${key}" class="radioLabel">${labels[key]}</label>`
+        ).join('\n                        ');
     }
     getFormattedTime() {
         return `${this.StartTime} - ${this.EndTime}`;
     }
     getServiceEmbeds() {
-        let embeds = '';
-        if (this.Services.spotify) {
-            embeds += `<iframe class="spotify service" src="https://open.spotify.com/embed/playlist/${this.Services.spotify}?utm_source=generator" title="Spotify Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
-        }
-        if (this.Services.apple) {
-            embeds += `<iframe class="appleMusic service" src="https://embed.music.apple.com/us/${this.Services.apple}" title="Apple Music Embed Player" loading="lazy" frameborder="0" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>`;
-        }
-        return embeds;
+        const s = this.Services;
+        let html = '';
+        if (s.tidal) html += `<iframe class="tidal service" src="https://embed.tidal.com/playlists/${s.tidal}" title="TIDAL Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        if (s.spotify) html += `<iframe class="spotify service" src="https://open.spotify.com/embed/playlist/${s.spotify}?utm_source=generator" title="Spotify Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        if (s.appleMusic) html += `<iframe class="appleMusic service" src="https://embed.music.apple.com/us/${s.appleMusic}" title="Apple Music Embed Player" loading="lazy" frameborder="0" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>`;
+        if (s.youtube) html += `<iframe class="youtube service" src="https://www.youtube.com/embed/${s.youtube}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+        if (s.youtubeMusic) html += `<iframe class="youtubeMusic service" src="https://www.youtube.com/embed/${s.youtubeMusic}" title="YouTube Music player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+        return html;
     }
 }
 function parseEventMatrix(eventmatrix) {
@@ -180,7 +187,7 @@ function parseEventMatrix(eventmatrix) {
             title,
             description,
             dj,
-            { spotify: (spotify || '').trim(), apple: (apple || '').trim() }
+            { tidal, spotify, appleMusic: apple, youtube: yt, youtubeMusic: ytmusic }
         );
     });
 }
