@@ -1,7 +1,9 @@
 function loadEvents() {
-    // mm,dd,yyyy,start,end,type,title,[description,dj,Tidal,Spotify,YouTube,YoutubeMusic]
+    // mm,dd,yyyy,start,end,type,title,[description,dj,Tidal,Spotify,YouTube,YoutubeMusic,AppleMusic]
+    // A music-service button only appears for an event if that service's column is filled in (leave unused columns empty, keep the commas).
     // DO NOT USE @, (, ), /, or other symbols!!!
     const eventmatrix = `
+    11,06,2026,17:00,21:00,dj,Army vs Air Force Boxing,WKDT provided walk-out music for Army vs Air Force Boxing,,,2bRg46YGatln5PDnLRnC6I,,,playlist/army-air-force-walk-out-songs/pl.u-DdANr1PC0P8WaYk
     01,30,2026,17:00,22:30,dj,Infantry Ball,No Description,Ethan,9076e1f1-493b-411b-942c-abe18cf88fa4,1GCyvdYupZj1Jk9P7UmX85,videoseries?si=RNDdXqjsG7YBLjTY&amp;list=PLOh6mlSStDuQlGD6-VgKQVmslKhEJ4yGW,videoseries?si=ETiwyPerPkzFiXSp&amp;list=PLOh6mlSStDuR8YYlbEqNxKWgrwmnre9MO
     12,13,2025,12:00,16:00,fb,Army vs Navy
     12,13,2025,09:00,11:30,dj,Army vs Navy Corps Tailgate
@@ -115,24 +117,17 @@ function loadEvents() {
     }
     // Add event to overlays (reworked to use Event class)
     events.forEach(event => {
-        if (event.Type === "dj" && event.ServiceFragments.length > 0) {
+        if (event.Type === "dj" && event.hasServices()) {
             const eventRef = `${event.Date.getMonth() + 1}-${event.Date.getDate()}-${event.Date.getFullYear()}_${event.Title.replace(/ /g, '-')}`;
             document.getElementById("overlays").innerHTML += `
             <div class="replayContainer" eventRef="${eventRef}">
                 <details open class="contentWrapper">
-                    <summary class="replayTitle">${event.Title} by DJ ${event.DJ} | ${event.Date.getMonth()+1}/${event.Date.getDate()}/${event.Date.getFullYear()}</summary>
+                    <summary class="replayTitle">${event.Title}${event.DJ ? ` by DJ ${event.DJ}` : ''} | ${event.Date.getMonth()+1}/${event.Date.getDate()}/${event.Date.getFullYear()}</summary>
                     <p>${event.Description}</p>
                     <div id="selectService" class="radioGroup">
                         <input type="radio" id="none" name="service" onClick="changeService('.none')" checked>
                         <label for="none" class="radioLabel">None</label>
-                        <input type="radio" id="tidal" name="service" onClick="changeService('.tidal')">
-                        <label for="tidal" class="radioLabel">Tidal</label>
-                        <input type="radio" id="spotify" name="service" onClick="changeService('.spotify')">
-                        <label for="spotify" class="radioLabel">Spotify</label>
-                        <input type="radio" id="youtube" name="service" onClick="changeService('.youtube')">
-                        <label for="youtube" class="radioLabel">YouTube</label>
-                        <input type="radio" id="youtubeMusic" name="service" onClick="changeService('.youtubeMusic')">
-                        <label for="youtubeMusic" class="radioLabel">YouTube Music</label>
+                        ${event.getServiceButtons()}
                     </div>
                 </details>
                 <div class="button closeOverlay" onclick="hideEventOverlay('${eventRef}');">X</div>
@@ -145,7 +140,7 @@ function loadEvents() {
     });
 }
 class Event {
-    constructor(month, day, year, startTime, endTime, type, title, description, dj, serviceFragments = []) {
+    constructor(month, day, year, startTime, endTime, type, title, description, dj, services = {}) {
         this.Date = new Date(year, month - 1, day);  // month is 0-based in JS
         this.StartTime = startTime;
         this.EndTime = endTime;
@@ -153,31 +148,35 @@ class Event {
         this.Title = title;
         this.Description = description;
         this.DJ = dj;
-        this.ServiceFragments = serviceFragments;  // Contains the service fragments for Tidal, Spotify, etc.
+        this.Services = services;  // Embed fragments by service: tidal, spotify, appleMusic, youtube, youtubeMusic
+    }
+    hasServices() {
+        return Object.values(this.Services).some(fragment => fragment);
+    }
+    getServiceButtons() {
+        const labels = { tidal: 'Tidal', spotify: 'Spotify', appleMusic: 'Apple Music', youtube: 'YouTube', youtubeMusic: 'YouTube Music' };
+        return Object.keys(labels).filter(key => this.Services[key]).map(key =>
+            `<input type="radio" id="${key}" name="service" onClick="changeService('.${key}')">
+                        <label for="${key}" class="radioLabel">${labels[key]}</label>`
+        ).join('\n                        ');
     }
     getFormattedTime() {
         return `${this.StartTime} - ${this.EndTime}`;
     }
     getServiceEmbeds() {
-        return this.ServiceFragments.map((fragment, index) => {
-            switch (index) {
-                case 0: // Tidal
-                    return `<iframe class="tidal service" src="https://embed.tidal.com/playlists/${fragment}" title="TIDAL Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
-                case 1: // Spotify
-                    return `<iframe class="spotify service" src="https://open.spotify.com/embed/playlist/${fragment}?utm_source=generator" title="Spotify Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
-                case 2: // YouTube
-                    return `<iframe class="youtube service" src="https://www.youtube.com/embed/${fragment}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
-                case 3: // YouTube Music
-                    return `<iframe class="youtubeMusic service" src="https://www.youtube.com/embed/${fragment}" title="YouTube Music player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
-                default:
-                    return ''; // Default case for any unexpected fragments
-            }
-        }).join('');
+        const s = this.Services;
+        let html = '';
+        if (s.tidal) html += `<iframe class="tidal service" src="https://embed.tidal.com/playlists/${s.tidal}" title="TIDAL Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        if (s.spotify) html += `<iframe class="spotify service" src="https://open.spotify.com/embed/playlist/${s.spotify}?utm_source=generator" title="Spotify Embed Player" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        if (s.appleMusic) html += `<iframe class="appleMusic service" src="https://embed.music.apple.com/us/${s.appleMusic}" title="Apple Music Embed Player" loading="lazy" frameborder="0" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"></iframe>`;
+        if (s.youtube) html += `<iframe class="youtube service" src="https://www.youtube.com/embed/${s.youtube}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+        if (s.youtubeMusic) html += `<iframe class="youtubeMusic service" src="https://www.youtube.com/embed/${s.youtubeMusic}" title="YouTube Music player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+        return html;
     }
 }
 function parseEventMatrix(eventmatrix) {
     return eventmatrix.split('\n').map(event => {
-        const [month, day, year, startTime, endTime, type, title, description, dj, tidal, spotify, yt, ytmusic] = event.split(',');
+        const [month, day, year, startTime, endTime, type, title, description, dj, tidal, spotify, yt, ytmusic, apple] = event.split(',');
         return new Event(
             parseInt(month, 10),
             parseInt(day, 10),
@@ -188,7 +187,7 @@ function parseEventMatrix(eventmatrix) {
             title,
             description,
             dj,
-            [tidal, spotify, yt, ytmusic].filter(fragment => fragment)
+            { tidal, spotify, appleMusic: apple, youtube: yt, youtubeMusic: ytmusic }
         );
     });
 }
