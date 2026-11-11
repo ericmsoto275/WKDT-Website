@@ -1,0 +1,89 @@
+#recordings {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.mediaSection {
+    margin: 1.2rem 0;
+    background-color: black;
+    color: white;
+}
+.mediaSection > summary {
+    list-style: none;
+    position: relative;
+    padding: 1rem 1rem 1rem 2.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.mediaSection > summary::-webkit-details-marker,
+.mediaEntry > summary::-webkit-details-marker {
+    display: none;
+}
+.mediaSection > summary::before {
+    content: '+';
+    position: absolute;
+    left: 1rem;
+    color: #D3BC8D;
+}
+.mediaSection[open] > summary::before {
+    content: '\2212';
+}
+.mediaSection > summary:hover {
+    color: #D3BC8D;
+}
+.mediaList {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    border-top: 0;
+}
+.mediaEntry {
+    border-bottom: 1px solid #ddd;
+}
+.mediaEntry:last-child {
+    border-bottom: 0;
+}
+.mediaEntry > summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.mediaEntry > summary:hover {
+    background-color: #D3BC8D55;
+}
+.mediaTitle {
+    font-weight: bold;
+}
+.mediaDate {
+    color: #555;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+.mediaBody {
+    padding: 0.2rem 1rem 1rem;
+}
+.mediaLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+}
+.mediaLink {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    text-decoration: none;
+}
+.mediaEmpty {
+    padding: 1rem;
+    color: #777;
+    font-style: italic;
+}
+.mediaBody .mediaEmpty {
+    padding: 0.8rem 0 0;
+}
