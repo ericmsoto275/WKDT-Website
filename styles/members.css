@@ -23,8 +23,12 @@
 #staff {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
-#members {
+.member-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.classHeader {
+    margin: 2% 2% 0;
+    text-align: center;
 }
 .non-leader {
     margin: .2vh .2vw;
