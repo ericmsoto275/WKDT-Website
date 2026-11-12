@@ -3,6 +3,26 @@ function loadEvents() {
     // A music-service button only appears for an event if that service's column is filled in (leave unused columns empty, keep the commas).
     // DO NOT USE @, (, ), /, or other symbols!!!
     const eventmatrix = `
+    12,09,2026,16:20,22:00,bonfire,Army vs Navy Bonfire
+    12,02,2026,19:10,22:30,branch,Branch Night
+    11,21,2026,11:00,15:30,fb,East Carolina vs USMA
+    11,21,2026,07:15,11:30,scout,Scout Game Day
+    11,07,2026,18:30,23:00,fb,Air Force vs USMA
+    11,06,2026,17:30,19:30,bbq,1REG 2BN BBQ
+    11,05,2026,19:00,21:00,banquet,B4 Buff Banquet
+    11,03,2026,16:30,18:50,ath,Brigade Company Athletics Finals
+    10,24,2026,10:30,16:00,rugby,Army Womens Rugby Support
+    10,23,2026,17:00,21:30,fest,Strikefest
+    10,17,2026,11:00,15:30,fb,Florida Atlantic vs USMA
+    10,10,2026,11:00,15:30,fb,Tulane vs USMA
+    10,09,2026,19:00,21:00,vb,Army vs Navy Volleyball
+    10,09,2026,16:30,18:30,wrestle,Outdoor Wrestling Showcase
+    09,12,2026,11:00,15:30,fb,South Florida vs USMA
+    09,12,2026,06:30,11:30,scout,Scout Game Day
+    09,05,2026,11:00,15:30,fb,Bryant vs USMA
+    08,24,2026,17:00,20:00,reception,Branch Week Commandant Welcome Reception
+    08,20,2026,18:15,19:30,soccer,Army vs Air Force Men's Soccer
+    08,14,2026,05:30,07:00,run,1CPT Run
     11,06,2026,17:00,21:00,dj,Army vs Air Force Boxing,WKDT provided walk-out music for Army vs Air Force Boxing,,,2bRg46YGatln5PDnLRnC6I,,,playlist/army-air-force-walk-out-songs/pl.u-DdANr1PC0P8WaYk
     01,30,2026,17:00,22:30,dj,Infantry Ball,No Description,Ethan,9076e1f1-493b-411b-942c-abe18cf88fa4,1GCyvdYupZj1Jk9P7UmX85,videoseries?si=RNDdXqjsG7YBLjTY&amp;list=PLOh6mlSStDuQlGD6-VgKQVmslKhEJ4yGW,videoseries?si=ETiwyPerPkzFiXSp&amp;list=PLOh6mlSStDuR8YYlbEqNxKWgrwmnre9MO
     12,13,2025,12:00,16:00,fb,Army vs Navy
